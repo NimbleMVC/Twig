@@ -1,0 +1,23 @@
+{
+    "name": "nimblephp/twig",
+    "description": "Twig for NimblePHP",
+    "type": "library",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Nimblephp\\twig\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Krzysztof Żyłka",
+            "email": "krzysztofzylka@yahoo.com"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "nimblephp/framework": "^0.1.0",
+        "twig/twig": "^3.9",
+        "krzysztofzylka/file": "^1.0.2"
+    }
+}
