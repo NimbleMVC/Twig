@@ -1,5 +1,5 @@
 # Obsługa Twig
-Szczegółowa instrukcja wkrótce w:
+Szczegółowa dokumentacja:
 [https://nimblemvc.github.io/documentation/](https://nimblemvc.github.io/documentation/extension/twig/start/#)
 
 ## Instalacja
