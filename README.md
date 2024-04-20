@@ -4,7 +4,7 @@ https://nimblemvc.github.io/documentation/
 
 ## Instalacja
 ```shell
-composer require ...
+composer require nimblephp/twig
 ```
 
 ## Użycie
