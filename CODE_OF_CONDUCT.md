@@ -1,7 +1,7 @@
 # Kodeks postępowania projektu NimblePHP
 
 ## Cel
-Nasz projekt NimblePHP jest otwartą społecznością skupioną na tworzeniu i rozwijaniu frameworka PHP.
+Nasz projekt NimblePHP jest otwartą społecznością skupioną na tworzeniu i rozwijaniu frameworka  i jego rozszerzeń PHP.
 Naszym celem jest stworzenie przyjaznego, pomocnego i szanującego środowiska dla wszystkich uczestników projektu.
 
 ## Nasze zasady
