@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pl">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Error {{ code }}</title>
+        <style>
+            body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+            h1 { color: #ff6347; }
+            p { font-size: 20px; }
+        </style>
+    </head>
+    <body>
+        <h1>Error {{ code }}</h1>
+        <p>{{ message }}</p>
+        <a href="{{ default_page }}">Back to main page</a>
+        {% if debug %}
+            <div style="height: 300px; overflow: auto; border: 1px solid black; margin-top: 15px; text-align: left; padding: 5px;">
+                <pre>{{ throwable | raw }}</pre>
+            </div>
+        {% endif %}
+    </body>
+</html>

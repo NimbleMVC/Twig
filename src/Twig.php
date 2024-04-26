@@ -7,6 +7,7 @@ use Krzysztofzylka\File\File;
 use Nimblephp\framework\Config;
 use Nimblephp\framework\Exception\NimbleException;
 use Nimblephp\framework\Kernel;
+use Throwable;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Loader\FilesystemLoader;
@@ -66,9 +67,48 @@ class Twig
     {
         try {
             return $this->twigEnvironment->render($twigFilePath, $variables);
-        } catch (\Throwable $throwable) {
+        } catch (Throwable $throwable) {
             throw new NimbleException($throwable->getMessage(), $throwable->getCode() ?? 500, $throwable);
         }
+    }
+
+    /**
+     * Render error template
+     * @param Throwable $throwable
+     * @return string
+     * @throws LoaderError
+     * @throws NimbleException
+     */
+    public function renderSimpleException(Throwable $throwable): string
+    {
+        $this->addPath(__DIR__ . '/Templates');
+
+        $errors = [
+            400 => 'Bad Request',
+            401 => 'Unauthorized',
+            403 => 'Forbidden',
+            404 => 'Page Not Found',
+            405 => 'Method Not Allowed',
+            408 => 'Request Timeout',
+            500 => 'Internal Server Error',
+            502 => 'Bad Gateway',
+            503 => 'Service Unavailable',
+            504 => 'Gateway Timeout'
+        ];
+        $debug = Config::get('DEBUG', false);
+        $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
+        $message = $debug ? $throwable->getMessage() : $errors[$code];
+
+        return $this->render(
+            'error.twig',
+            [
+                'code' => $code,
+                'message' => $message,
+                'debug' => $debug,
+                'throwable' => var_export($throwable, true),
+                'default_page' => '/' . Config::get('DEFAULT_CONTROLLER') . '/' . Config::get('DEFAULT_METHOD')
+            ]
+        );
     }
 
 }
