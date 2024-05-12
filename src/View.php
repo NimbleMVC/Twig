@@ -69,7 +69,7 @@ class View implements ViewInterface
         $filePath = Kernel::$projectPath . $this->viewPath . $viewName . '.twig';
 
         if (!file_exists($filePath)) {
-            throw new NotFoundException();
+            throw new NotFoundException('Not found view in path ' . $filePath);
         }
 
         $response = new Response();
