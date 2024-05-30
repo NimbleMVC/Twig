@@ -42,12 +42,19 @@ class Twig
      */
     public function __construct()
     {
-        File::mkdir(Kernel::$projectPath . '/storage/cache/twig');
+        $cachePath = Kernel::$projectPath . '/storage/cache/twig';
+
+        File::mkdir(
+            [
+                $cachePath,
+                Kernel::$projectPath . '/templates'
+            ]
+        );
 
         $this->twigFileSystemLoader = new FilesystemLoader();
         $this->addPath(Kernel::$projectPath . '/src/View');
         $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
-            'cache' => Kernel::$projectPath . '/storage/cache/twig',
+            'cache' => $cachePath,
         ]);
         $this->twigEnvironment->setCache(Config::get('TWIG_CACHE', false));
     }
