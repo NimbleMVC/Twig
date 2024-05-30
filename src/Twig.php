@@ -19,6 +19,12 @@ class Twig
 {
 
     /**
+     * Global variables
+     * @var array
+     */
+    public static array $globalVariables = [];
+
+    /**
      * Twig file system loader instance
      * @var FilesystemLoader
      */
@@ -66,6 +72,8 @@ class Twig
     public function render(string $twigFilePath, array $variables = []): string
     {
         try {
+            $variables = array_merge($variables, self::$globalVariables);
+
             return $this->twigEnvironment->render($twigFilePath, $variables);
         } catch (Throwable $throwable) {
             throw new NimbleException($throwable->getMessage(), $throwable->getCode() ?? 500, $throwable);
@@ -109,6 +117,17 @@ class Twig
                 'default_page' => '/' . Config::get('DEFAULT_CONTROLLER') . '/' . Config::get('DEFAULT_METHOD')
             ]
         );
+    }
+
+    /**
+     * Set global variable
+     * @param string $name
+     * @param mixed $value
+     * @return void
+     */
+    public function addGlobal(string $name, mixed $value): void
+    {
+        self::$globalVariables[$name] = $value;
     }
 
 }
