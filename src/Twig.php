@@ -48,6 +48,19 @@ class Twig
             'here' => $_SERVER['REQUEST_URI']
         ];
 
+        $directoryPaths = [
+            $cachePath,
+            Kernel::$projectPath . '/templates'
+        ];
+
+        foreach ($directoryPaths as $directoryPath) {
+            try {
+                File::mkdir($directoryPath);
+            } catch (Throwable $e) {
+                throw new NimbleException('Failed to create ' . $directoryPath . ' directory: ' . $e->getMessage(), 500);
+            }
+        }
+
         File::mkdir(
             [
                 $cachePath,
