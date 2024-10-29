@@ -25,6 +25,12 @@ class Twig
     public static array $globalVariables = [];
 
     /**
+     * Global paths
+     * @var array
+     */
+    public static array $globalPaths = [];
+
+    /**
      * Twig file system loader instance
      * @var FilesystemLoader
      */
@@ -70,6 +76,11 @@ class Twig
 
         $this->twigFileSystemLoader = new FilesystemLoader();
         $this->addPath(Kernel::$projectPath . '/src/View');
+
+        foreach (self::$globalPaths as $globalPath) {
+            $this->addPath($globalPath);
+        }
+
         $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
             'cache' => $cachePath,
         ]);
@@ -152,6 +163,20 @@ class Twig
     public function addGlobal(string $name, mixed $value): void
     {
         self::$globalVariables[$name] = $value;
+    }
+
+    /**
+     * Add global path
+     * @param string $path
+     * @return void
+     */
+    public function addGlobalPath(string $path): void
+    {
+        if (in_array($path, self::$globalPaths)) {
+            return;
+        }
+
+        self::$globalPaths[] = $path;
     }
 
 }
