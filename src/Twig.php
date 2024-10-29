@@ -9,6 +9,7 @@ use Nimblephp\framework\Exception\NimbleException;
 use Nimblephp\framework\Kernel;
 use Throwable;
 use Twig\Environment;
+use Twig\TwigFunction;
 use Twig\Error\LoaderError;
 use Twig\Loader\FilesystemLoader;
 
@@ -84,6 +85,9 @@ class Twig
         $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
             'cache' => $cachePath,
         ]);
+
+        $this->loadFunctions(__DIR__ . '/Functions');
+
         $this->twigEnvironment->setCache(Config::get('TWIG_CACHE', false));
     }
 
@@ -166,17 +170,25 @@ class Twig
     }
 
     /**
-     * Add global path
-     * @param string $path
+     * Loading functions from directory
+     * @param string $directory
      * @return void
+     * @throws NimbleException
      */
-    public function addGlobalPath(string $path): void
+    private function loadFunctions(string $directory): void
     {
-        if (in_array($path, self::$globalPaths)) {
-            return;
+        if (!is_dir($directory)) {
+            throw new NimbleException("Directory $directory does not exist.");
         }
 
-        self::$globalPaths[] = $path;
+        foreach (glob($directory . '/*.php') as $filename) {
+            require_once $filename;
+
+            $functionName = basename($filename, '.php');
+            if (function_exists($functionName)) {
+                $this->twigEnvironment->addFunction(new TwigFunction($functionName, $functionName));
+            }
+        }
     }
 
 }
