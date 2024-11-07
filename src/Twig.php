@@ -5,6 +5,8 @@ namespace Nimblephp\twig;
 use Exception;
 use Krzysztofzylka\File\File;
 use Nimblephp\framework\Config;
+use Nimblephp\framework\Exception\DatabaseException;
+use Nimblephp\framework\Exception\HiddenException;
 use Nimblephp\framework\Exception\NimbleException;
 use Nimblephp\framework\Kernel;
 use Throwable;
@@ -122,11 +124,12 @@ class Twig
     /**
      * Render error template
      * @param Throwable $throwable
+     * @param array $variables
      * @return string
      * @throws LoaderError
      * @throws NimbleException
      */
-    public function renderSimpleException(Throwable $throwable): string
+    public function renderSimpleException(Throwable $throwable, array $variables = []): string
     {
         $this->addPath(__DIR__ . '/Templates');
 
@@ -146,16 +149,43 @@ class Twig
         $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
         $message = $debug ? $throwable->getMessage() : $errors[$code];
 
+        $simpleThrowable = $this->throwableToString($throwable);
+
+        if ($throwable->getPrevious()) {
+            $simpleThrowable .= PHP_EOL . PHP_EOL . $this->throwableToString($throwable->getPrevious());
+        }
+
         return $this->render(
             'error.twig',
             [
                 'code' => $code,
                 'message' => $message,
                 'debug' => $debug,
+                'simpleThrowable' => $simpleThrowable,
                 'throwable' => var_export($throwable, true),
-                'default_page' => '/' . Config::get('DEFAULT_CONTROLLER') . '/' . Config::get('DEFAULT_METHOD')
+                'default_page' => '/' . Config::get('DEFAULT_CONTROLLER') . '/' . Config::get('DEFAULT_METHOD'),
+                ...$variables
             ]
         );
+    }
+
+    /**
+     * Throwable to string method
+     * @param Throwable $throwable
+     * @return string
+     */
+    private function throwableToString(Throwable $throwable): string
+    {
+        $hiddenMessage = '';
+
+        if (method_exists($throwable, 'getHiddenMessage')) {
+            $hiddenMessage = '<b style="color: #AAF;">Hidden message: ' . $throwable->getHiddenMessage() . '</b>' . PHP_EOL;
+        }
+
+        return '<i style="color: #FAA">[Code: ' . $throwable->getCode() . '] ' . $throwable->getMessage() . '</i>' . PHP_EOL
+            . $hiddenMessage
+            . $throwable->getFile() . '(' . $throwable->getLine() . ')' . PHP_EOL
+            . $throwable->getTraceAsString();
     }
 
     /**
