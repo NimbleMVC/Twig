@@ -2,8 +2,10 @@
 
 namespace Nimblephp\twig;
 
+use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
 use Exception;
 use Krzysztofzylka\File\File;
+use Nimblephp\debugbar\Debugbar;
 use Nimblephp\framework\Config;
 use Nimblephp\framework\Exception\DatabaseException;
 use Nimblephp\framework\Exception\HiddenException;
@@ -85,12 +87,14 @@ class Twig
         }
 
         $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
-            'cache' => $cachePath,
+            'cache' => $cachePath
         ]);
 
         $this->loadFunctions(__DIR__ . '/Functions');
 
-        $this->twigEnvironment->setCache(Config::get('TWIG_CACHE', false));
+        if (!($_ENV['TWIG_CACHE'] ?? false)) {
+            $this->twigEnvironment->setCache(false);
+        }
     }
 
     /**
