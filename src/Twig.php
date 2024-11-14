@@ -56,7 +56,7 @@ class Twig
         $cachePath = Kernel::$projectPath . '/storage/cache/twig';
 
         self::$globalVariables['APP'] = [
-            'here' => $_SERVER['REQUEST_URI']
+            'here' => $_SERVER['REQUEST_URI'] ?? ''
         ];
 
         $directoryPaths = [
