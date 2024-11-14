@@ -154,11 +154,18 @@ class Twig
         $debug = Config::get('DEBUG', false);
         $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
         $message = $debug ? $throwable->getMessage() : $errors[$code];
+        $simpleThrowable = '';
+        $currentThrowable = $throwable;
 
-        $simpleThrowable = $this->throwableToString($throwable);
+        while (True) {
+            $simpleThrowable .= $this->throwableToString($currentThrowable);
 
-        if ($throwable->getPrevious()) {
-            $simpleThrowable .= PHP_EOL . PHP_EOL . $this->throwableToString($throwable->getPrevious());
+            if ($currentThrowable->getPrevious()) {
+                $simpleThrowable .= PHP_EOL . PHP_EOL;
+                $currentThrowable = $currentThrowable->getPrevious();
+            } else {
+                break;
+            }
         }
 
         return $this->render(
