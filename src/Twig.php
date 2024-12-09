@@ -6,9 +6,6 @@ use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
 use Exception;
 use Krzysztofzylka\File\File;
 use Nimblephp\debugbar\Debugbar;
-use Nimblephp\framework\Config;
-use Nimblephp\framework\Exception\DatabaseException;
-use Nimblephp\framework\Exception\HiddenException;
 use Nimblephp\framework\Exception\NimbleException;
 use Nimblephp\framework\Kernel;
 use Throwable;
@@ -151,7 +148,7 @@ class Twig
             503 => 'Service Unavailable',
             504 => 'Gateway Timeout'
         ];
-        $debug = Config::get('DEBUG', false);
+        $debug = $_ENV['DEBUG'] ?? false;
         $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
         $message = $debug ? $throwable->getMessage() : $errors[$code];
         $simpleThrowable = '';
@@ -176,7 +173,7 @@ class Twig
                 'debug' => $debug,
                 'simpleThrowable' => $simpleThrowable,
                 'throwable' => var_export($throwable, true),
-                'default_page' => '/' . Config::get('DEFAULT_CONTROLLER') . '/' . Config::get('DEFAULT_METHOD'),
+                'default_page' => '/' . $_ENV['DEFAULT_CONTROLLER'] . '/' . $_ENV['DEFAULT_METHOD'],
                 ...$variables
             ]
         );
