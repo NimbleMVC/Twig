@@ -225,6 +225,7 @@ class Twig
             require_once $filename;
 
             $functionName = basename($filename, '.php');
+
             if (function_exists($functionName)) {
                 $this->twigEnvironment->addFunction(new TwigFunction($functionName, $functionName));
             }
