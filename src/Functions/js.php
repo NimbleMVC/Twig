@@ -37,8 +37,11 @@ function js(array $data = []): string
     }
 
     $jsonData = json_encode($data, JSON_THROW_ON_ERROR);
+    $random = md5(base64_encode(random_bytes(18)));
 
-    return '<script>'
-        . file_get_contents($jsPath) . '($(document.currentScript).parent(), ' . $jsonData . ')'
+    return '<script id="script_' . $random . '">'
+        . '$(document).ready(function() {'
+        . file_get_contents($jsPath) . '($("#script_' . $random . '").parent(), ' . $jsonData . ')'
+        . '});'
         . '</script>';
 }
