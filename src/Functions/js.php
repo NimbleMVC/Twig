@@ -19,6 +19,8 @@ function js(array $data = []): string
         if (isset($trace['class']) && str_contains($trace['class'], 'src\\Controller\\')) {
             $controller = str_replace('src\\Controller\\', '', $trace['class']);
             $action = $trace['function'];
+
+            break;
         }
     }
 
