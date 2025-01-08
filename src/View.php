@@ -78,4 +78,21 @@ class View implements ViewInterface
         $response->send();
     }
 
+    /**
+     * View rendered inside Twig
+     * @return bool
+     */
+    public function inTwig(): bool
+    {
+        $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach ($backtrace as $trace) {
+            if (isset($trace['class']) && strpos($trace['class'], 'Twig') === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }
