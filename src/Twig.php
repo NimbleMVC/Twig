@@ -50,6 +50,12 @@ class Twig
      */
     public function __construct()
     {
+
+        if (Kernel::$activeDebugbar) {
+            $debugbarUuid = Debugbar::uuid();
+            Debugbar::startTime($debugbarUuid, 'Init twig instance');
+        }
+
         $cachePath = Kernel::$projectPath . '/storage/cache/twig';
 
         self::$globalVariables['APP'] = [
@@ -93,6 +99,10 @@ class Twig
 
         if (!($_ENV['TWIG_CACHE'] ?? false)) {
             $this->twigEnvironment->setCache(false);
+        }
+
+        if (Kernel::$activeDebugbar) {
+            Debugbar::stopTime($debugbarUuid);
         }
     }
 
