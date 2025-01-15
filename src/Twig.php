@@ -33,6 +33,12 @@ class Twig
     public static array $globalPaths = [];
 
     /**
+     * Global headers
+     * @var array
+     */
+    public static array $headers = [];
+
+    /**
      * Twig file system loader instance
      * @var FilesystemLoader
      */
@@ -50,7 +56,6 @@ class Twig
      */
     public function __construct()
     {
-
         if (Kernel::$activeDebugbar) {
             $debugbarUuid = Debugbar::uuid();
             Debugbar::startTime($debugbarUuid, 'Init twig instance');
@@ -59,7 +64,8 @@ class Twig
         $cachePath = Kernel::$projectPath . '/storage/cache/twig';
 
         self::$globalVariables['APP'] = [
-            'here' => $_SERVER['REQUEST_URI'] ?? ''
+            'here' => $_SERVER['REQUEST_URI'] ?? '',
+            'headers' => implode("\n\r", self::$headers)
         ];
 
         $directoryPaths = [
@@ -240,6 +246,37 @@ class Twig
                 $this->twigEnvironment->addFunction(new TwigFunction($functionName, $functionName));
             }
         }
+    }
+
+    /**
+     * Add header
+     * @param $header
+     * @return void
+     */
+    public static function addHeader($header): void
+    {
+        self::$headers[] = $header;
+    }
+
+    /**
+     * Add js header
+     * @param string $url
+     * @return void
+     */
+    public static function addJsHeader(string $url): void
+    {
+        self::addHeader('<script type="text/javascript" src="' . $url . '"></script>');
+    }
+
+    /**
+     * Add css header
+     * @param string $url
+     * @param array $attributes
+     * @return void
+     */
+    public static function addCssHeader(string $url): void
+    {
+        self::addHeader('<link rel="stylesheet" type="text/css" href="' . $url . '" />');
     }
 
 }
