@@ -1,26 +1,37 @@
 <?php
 
+use Nimblephp\debugbar\Debugbar;
 use Nimblephp\framework\Exception\NimbleException;
+use Random\RandomException;
+use Twig\Markup;
 
 /**
  * JS loader
  * @param array $data
- * @return string
+ * @param string|null $jsPath
+ * @return Markup
  * @throws JsonException
  * @throws NimbleException
+ * @throws RandomException
  */
-function js(array $data = []): string
+function js(array $data = [], ?string $jsPath = null): Markup
 {
     $templateStack = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     $controller = null;
     $action = null;
 
-    foreach ($templateStack as $trace) {
-        if (isset($trace['class']) && str_contains($trace['class'], 'src\\Controller\\')) {
-            $controller = str_replace('src\\Controller\\', '', $trace['class']);
-            $action = $trace['function'];
+    if (!is_null($jsPath)) {
+        $jsPath = explode('/', $jsPath);
+        $controller = trim(strtolower($jsPath[0]));
+        $action = trim(strtolower($jsPath[1]));
+    } else {
+        foreach ($templateStack as $trace) {
+            if (isset($trace['class']) && str_contains($trace['class'], 'src\\Controller\\')) {
+                $controller = str_replace('src\\Controller\\', '', $trace['class']);
+                $action = $trace['function'];
 
-            break;
+                break;
+            }
         }
     }
 
@@ -30,7 +41,9 @@ function js(array $data = []): string
 
     $jsPath = \Nimblephp\framework\Kernel::$projectPath . '/src/View/' . $controller . '/' . $action . '.js';
 
-    \Nimblephp\debugbar\Debugbar::addMessage(['controller' => $controller, 'action' => $action, 'path' => $jsPath], 'Load view js');
+    if ($_ENV['DEBUG']) {
+        Debugbar::addMessage(['controller' => $controller, 'action' => $action, 'path' => $jsPath], 'Load view js');
+    }
 
     if (!file_exists($jsPath)) {
         throw new NimbleException('View js file not found');
@@ -39,9 +52,11 @@ function js(array $data = []): string
     $jsonData = json_encode($data, JSON_THROW_ON_ERROR);
     $random = md5(base64_encode(random_bytes(18)));
 
-    return '<script id="script_' . $random . '">'
+    $output = '<script id="script_' . $random . '">'
         . '$(document).ready(function() {'
         . file_get_contents($jsPath) . '($("#script_' . $random . '").parent(), ' . $jsonData . ')'
         . '});'
         . '</script>';
+
+    return new Markup($output, 'UTF-8');
 }

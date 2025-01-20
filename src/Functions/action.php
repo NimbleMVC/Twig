@@ -1,6 +1,8 @@
 <?php
 
-function action(string $controller, string $method, string ...$params): false|string
+use Twig\Markup;
+
+function action(string $controller, string $method, string ...$params): false|Markup
 {
     $route = new \Nimblephp\framework\Route(new \Nimblephp\framework\Request());
     $route->setController($controller);
@@ -10,5 +12,5 @@ function action(string $controller, string $method, string ...$params): false|st
     ob_start();
     $kernel->handle();
 
-    return ob_get_clean();
+    return new Markup(ob_get_clean(), 'UTF-8');
 }
