@@ -41,7 +41,7 @@ function js(array $data = [], ?string $jsPath = null): Markup
 
     $jsPath = \Nimblephp\framework\Kernel::$projectPath . '/src/View/' . $controller . '/' . $action . '.js';
 
-    if ($_ENV['DEBUG']) {
+    if (\Nimblephp\framework\Kernel::$activeDebugbar) {
         Debugbar::addMessage(['controller' => $controller, 'action' => $action, 'path' => $jsPath], 'Load view js');
     }
 
