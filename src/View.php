@@ -18,7 +18,7 @@ class View implements ViewInterface
      * View path
      * @var string
      */
-    protected string $viewPath = '/src/View/';
+    protected string $viewPath = '/App/View/';
 
     /**
      * View variable
