@@ -82,7 +82,7 @@ class Twig
         );
 
         $this->twigFileSystemLoader = new FilesystemLoader();
-        $this->addPath(Kernel::$projectPath . '/src/View');
+        $this->addPath(Kernel::$projectPath . '/App/View');
 
         foreach (self::$globalPaths as $globalPath) {
             $this->addPath($globalPath);

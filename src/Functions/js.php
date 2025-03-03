@@ -25,8 +25,8 @@ function js(array $data = [], ?string $jsPath = null): Markup
         $action = trim(strtolower($jsPath[1]));
     } else {
         foreach ($templateStack as $trace) {
-            if (isset($trace['class']) && str_contains($trace['class'], 'src\\Controller\\')) {
-                $controller = str_replace('src\\Controller\\', '', $trace['class']);
+            if (isset($trace['class']) && str_contains($trace['class'], 'App\\Controller\\')) {
+                $controller = str_replace('App\\Controller\\', '', $trace['class']);
                 $action = $trace['function'];
 
                 break;
@@ -38,7 +38,7 @@ function js(array $data = [], ?string $jsPath = null): Markup
         throw new NimbleException('Failed load js file');
     }
 
-    $jsPath = \NimblePHP\framework\Kernel::$projectPath . '/src/View/' . $controller . '/' . $action . '.js';
+    $jsPath = \NimblePHP\framework\Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
 
     if (!file_exists($jsPath)) {
         throw new NimbleException('View js file not found');
