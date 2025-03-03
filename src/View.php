@@ -1,13 +1,12 @@
 <?php
 
-namespace Nimblephp\twig;
+namespace NimblePHP\twig;
 
-use Nimblephp\debugbar\Debugbar;
-use Nimblephp\framework\Exception\NimbleException;
-use Nimblephp\framework\Exception\NotFoundException;
-use Nimblephp\framework\Interfaces\ViewInterface;
-use Nimblephp\framework\Kernel;
-use Nimblephp\framework\Response;
+use NimblePHP\framework\Exception\NimbleException;
+use NimblePHP\framework\Exception\NotFoundException;
+use NimblePHP\framework\Interfaces\ViewInterface;
+use NimblePHP\framework\Kernel;
+use NimblePHP\framework\Response;
 
 /**
  * Twig view instance
@@ -67,11 +66,6 @@ class View implements ViewInterface
      */
     public function render(string $viewName, array $data = []): void
     {
-        if (Kernel::$activeDebugbar) {
-            $debugbarUuid = Debugbar::uuid();
-            Debugbar::startTime($debugbarUuid, 'Render twig view ' . $viewName);
-        }
-
         $filePath = Kernel::$projectPath . $this->viewPath . $viewName . '.twig';
 
         if (!file_exists($filePath)) {
@@ -82,10 +76,6 @@ class View implements ViewInterface
         $response->setContent($this->twig->render($viewName . '.twig', $data));
         $response->setStatusCode($this->responseCode);
         $response->send();
-
-        if (Kernel::$activeDebugbar) {
-            Debugbar::stopTime($debugbarUuid);
-        }
     }
 
     /**
@@ -97,7 +87,7 @@ class View implements ViewInterface
         $backtrace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
 
         foreach ($backtrace as $trace) {
-            if (isset($trace['class']) && strpos($trace['class'], 'Twig') === 0) {
+            if (isset($trace['class']) && str_starts_with($trace['class'], 'Twig')) {
                 return true;
             }
         }
