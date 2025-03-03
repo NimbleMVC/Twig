@@ -1,11 +1,11 @@
 <?php
 
-namespace NimblePHP\twig;
+namespace NimblePHP\Twig;
 
 use Exception;
 use Krzysztofzylka\File\File;
-use NimblePHP\framework\Exception\NimbleException;
-use NimblePHP\framework\Kernel;
+use NimblePHP\Framework\Exception\NimbleException;
+use NimblePHP\Framework\Kernel;
 use Throwable;
 use Twig\Environment;
 use Twig\TwigFunction;

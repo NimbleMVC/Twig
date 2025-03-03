@@ -1,6 +1,6 @@
 <?php
 
-use NimblePHP\framework\Exception\NimbleException;
+use NimblePHP\Framework\Exception\NimbleException;
 use Random\RandomException;
 use Twig\Markup;
 
@@ -38,7 +38,7 @@ function js(array $data = [], ?string $jsPath = null): Markup
         throw new NimbleException('Failed load js file');
     }
 
-    $jsPath = \NimblePHP\framework\Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
+    $jsPath = \NimblePHP\Framework\Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
 
     if (!file_exists($jsPath)) {
         throw new NimbleException('View js file not found');

@@ -1,9 +1,9 @@
 <?php
 
-namespace NimblePHP\twig;
+namespace NimblePHP\Twig;
 
-use NimblePHP\framework\Exception\NimbleException;
-use NimblePHP\framework\Kernel;
+use NimblePHP\Framework\Exception\NimbleException;
+use NimblePHP\Framework\Kernel;
 use Twig\Error\LoaderError;
 
 class Template

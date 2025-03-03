@@ -1,12 +1,12 @@
 <?php
 
-namespace NimblePHP\twig;
+namespace NimblePHP\Twig;
 
-use NimblePHP\framework\Exception\NimbleException;
-use NimblePHP\framework\Exception\NotFoundException;
-use NimblePHP\framework\Interfaces\ViewInterface;
-use NimblePHP\framework\Kernel;
-use NimblePHP\framework\Response;
+use NimblePHP\Framework\Exception\NimbleException;
+use NimblePHP\Framework\Exception\NotFoundException;
+use NimblePHP\Framework\Interfaces\ViewInterface;
+use NimblePHP\Framework\Kernel;
+use NimblePHP\Framework\Response;
 
 /**
  * Twig view instance
