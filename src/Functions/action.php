@@ -11,7 +11,7 @@ use Twig\Markup;
  */
 function action(string $controller, string $method, string ...$params): false|Markup
 {
-    $route = new \NimblePHP\Framework\Route(new \NimblePHP\Framework\Request());
+    $route = new \NimblePHP\Framework\Routes\Route(new \NimblePHP\Framework\Request());
     $route->setController($controller);
     $route->setMethod($method);
     $route->setParams($params);
