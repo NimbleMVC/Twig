@@ -1,13 +1,11 @@
 <?php
 
-namespace Nimblephp\twig;
+namespace NimblePHP\Twig;
 
-use DebugBar\Bridge\Twig\TraceableTwigEnvironment;
 use Exception;
 use Krzysztofzylka\File\File;
-use Nimblephp\debugbar\Debugbar;
-use Nimblephp\framework\Exception\NimbleException;
-use Nimblephp\framework\Kernel;
+use NimblePHP\Framework\Exception\NimbleException;
+use NimblePHP\Framework\Kernel;
 use Throwable;
 use Twig\Environment;
 use Twig\TwigFunction;
@@ -56,11 +54,6 @@ class Twig
      */
     public function __construct()
     {
-        if (Kernel::$activeDebugbar) {
-            $debugbarUuid = Debugbar::uuid();
-            Debugbar::startTime($debugbarUuid, 'Init twig instance');
-        }
-
         $cachePath = Kernel::$projectPath . '/storage/cache/twig';
 
         self::$globalVariables['APP'] = [
@@ -89,7 +82,7 @@ class Twig
         );
 
         $this->twigFileSystemLoader = new FilesystemLoader();
-        $this->addPath(Kernel::$projectPath . '/src/View');
+        $this->addPath(Kernel::$projectPath . '/App/View');
 
         foreach (self::$globalPaths as $globalPath) {
             $this->addPath($globalPath);
@@ -105,10 +98,6 @@ class Twig
 
         if (!($_ENV['TWIG_CACHE'] ?? false)) {
             $this->twigEnvironment->setCache(false);
-        }
-
-        if (Kernel::$activeDebugbar) {
-            Debugbar::stopTime($debugbarUuid);
         }
     }
 
@@ -271,7 +260,6 @@ class Twig
     /**
      * Add css header
      * @param string $url
-     * @param array $attributes
      * @return void
      */
     public static function addCssHeader(string $url): void

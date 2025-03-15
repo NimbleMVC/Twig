@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "Nimblephp\\twig\\": "src/"
+            "NimblePHP\\Twig\\": "src/"
         }
     },
     "authors": [
@@ -16,7 +16,7 @@
     ],
     "require": {
         "php": ">=8.2",
-        "nimblephp/framework": "^0.1.18",
+        "nimblephp/framework": "^0.2.0",
         "twig/twig": "^3.18",
         "krzysztofzylka/file": "^1.0.2"
     }

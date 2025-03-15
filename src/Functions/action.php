@@ -2,13 +2,20 @@
 
 use Twig\Markup;
 
+/**
+ * @param string $controller
+ * @param string $method
+ * @param string ...$params
+ * @return false|Markup
+ * @throws Throwable
+ */
 function action(string $controller, string $method, string ...$params): false|Markup
 {
-    $route = new \Nimblephp\framework\Route(new \Nimblephp\framework\Request());
+    $route = new \NimblePHP\Framework\Routes\Route(new \NimblePHP\Framework\Request());
     $route->setController($controller);
     $route->setMethod($method);
     $route->setParams($params);
-    $kernel = new \Nimblephp\framework\Kernel($route);
+    $kernel = new \NimblePHP\Framework\Kernel($route);
     ob_start();
     $kernel->handle();
 
