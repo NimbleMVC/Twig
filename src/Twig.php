@@ -155,7 +155,7 @@ class Twig
         ];
         $debug = $_ENV['DEBUG'] ?? false;
         $code = $throwable->getCode() > 0 ? $throwable->getCode() : 500;
-        $message = $debug ? $throwable->getMessage() : $errors[$code];
+        $message = $debug ? $throwable->getMessage() : ($errors[$code] ?? 'Internal Server Error');
         $simpleThrowable = '';
         $currentThrowable = $throwable;
 
