@@ -1,6 +1,7 @@
 <?php
 
 use NimblePHP\Framework\Exception\NimbleException;
+use NimblePHP\Framework\Kernel;
 use Random\RandomException;
 use Twig\Markup;
 
@@ -22,7 +23,7 @@ function js(array $data = [], ?string $jsPath = null): Markup
     if (!is_null($jsPath)) {
         $jsPath = explode('/', $jsPath);
         $controller = trim(strtolower($jsPath[0]));
-        $action = trim(strtolower($jsPath[1]));
+        $action = trim($jsPath[1]);
     } else {
         foreach ($templateStack as $trace) {
             if (isset($trace['class']) && str_contains($trace['class'], 'App\\Controller\\')) {
@@ -38,10 +39,10 @@ function js(array $data = [], ?string $jsPath = null): Markup
         throw new NimbleException('Failed load js file');
     }
 
-    $jsPath = \NimblePHP\Framework\Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
+    $jsPath = Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
 
     if (!file_exists($jsPath)) {
-        throw new NimbleException('View js file not found');
+        throw new NimbleException('View js file not found ' . $jsPath);
     }
 
     $jsonData = json_encode($data, JSON_THROW_ON_ERROR);
