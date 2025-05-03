@@ -91,7 +91,8 @@ class Twig
         $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
             'cache' => $cachePath,
             'auto_reload' => true,
-            'optimizations' => -1
+            'optimizations' => -1,
+            'use_yield' => true
         ]);
 
         $this->loadFunctions(__DIR__ . '/Functions');
