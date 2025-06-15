@@ -48,5 +48,5 @@ function formId(string $id): false|Markup
         $_POST['formId'] = $previous;
     }
 
-    return new Markup($id . '-' . $form, 'UTF-8');
+    return new Markup($form, 'UTF-8');
 }
