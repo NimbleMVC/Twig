@@ -33,6 +33,7 @@ function formId(string $id): false|Markup
             return $this->renderField($this->fields[0]);
         }
     };
+
     $previous = null;
 
     if (isset($_POST['formId'])) {
