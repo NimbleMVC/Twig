@@ -17,7 +17,7 @@ function formId(string $id): false|Markup
         public \NimblePHP\Form\Enum\MethodEnum $method = MethodEnum::POST;
         public \NimblePHP\Framework\Request $request;
         public array $validationErrors = [];
-        
+
         public function __construct()
         {
             $this->validationErrors = \NimblePHP\Form\Form::$VALIDATIONS;
@@ -33,8 +33,19 @@ function formId(string $id): false|Markup
             return $this->renderField($this->fields[0]);
         }
     };
+    $previous = null;
+
+    if (isset($_POST['formId'])) {
+        $previous = $_POST['formId'];
+        $_POST['formId'] = $id;
+    }
+
     $form->request = new \NimblePHP\Framework\Request();
     $form->addInputHidden('formId', $id);
 
-    return new Markup($form, 'UTF-8');
+    if ($previous) {
+        $_POST['formId'] = $previous;
+    }
+
+    return new Markup($id . '-' . $form, 'UTF-8');
 }
