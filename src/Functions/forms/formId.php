@@ -4,11 +4,8 @@ use NimblePHP\Form\Enum\MethodEnum;
 use Twig\Markup;
 
 /**
- * @param string $controller
- * @param string $method
- * @param string ...$params
+ * @param string $id
  * @return false|Markup
- * @throws Throwable
  */
 function formId(string $id): false|Markup
 {

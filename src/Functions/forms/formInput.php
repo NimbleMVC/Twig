@@ -4,13 +4,12 @@ use NimblePHP\Form\Enum\MethodEnum;
 use Twig\Markup;
 
 /**
- * @param string $controller
- * @param string $method
- * @param string ...$params
+ * @param string $name
+ * @param string|null $title
+ * @param array $attributes
  * @return false|Markup
- * @throws Throwable
  */
-function formInput(string $name, string $title = null, array $attributes = []): false|Markup
+function formInput(string $name, ?string $title = null, array $attributes = []): false|Markup
 {
     $form = new class () {
         use \NimblePHP\Form\Traits\Field;
@@ -33,6 +32,7 @@ function formInput(string $name, string $title = null, array $attributes = []): 
             return $this->renderField($this->fields[0]);
         }
     };
+
     $form->request = new \NimblePHP\Framework\Request();
     $form->addInput($name, $title, $attributes);
 

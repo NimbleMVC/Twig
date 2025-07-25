@@ -4,13 +4,12 @@ use NimblePHP\Form\Enum\MethodEnum;
 use Twig\Markup;
 
 /**
- * @param string $controller
- * @param string $method
- * @param string ...$params
+ * @param string $name
+ * @param string|null $title
+ * @param array $attributes
  * @return false|Markup
- * @throws Throwable
  */
-function formTextarea(string $name, string $title = null, array $attributes = []): false|Markup
+function formTextarea(string $name, ?string $title = null, array $attributes = []): false|Markup
 {
     $form = new class () {
         use \NimblePHP\Form\Traits\Field;
