@@ -6,10 +6,10 @@ use Exception;
 use Krzysztofzylka\File\File;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
-use NimblePHP\Framework\ModuleRegister;
 use Throwable;
 use Twig\Environment;
 use Twig\TwigFunction;
+use Twig\TwigFilter;
 use Twig\Error\LoaderError;
 use Twig\Loader\FilesystemLoader;
 
@@ -97,14 +97,106 @@ class Twig
         ]);
 
         $this->loadFunctions(__DIR__ . '/Functions');
-
-        if (ModuleRegister::isset('nimblephp/form')) {
-            $this->loadFunctions(__DIR__ . '/Functions/forms');
-        }
+        $this->addCustomFilters();
 
         if (!($_ENV['TWIG_CACHE'] ?? false)) {
             $this->twigEnvironment->setCache(false);
         }
+    }
+
+    /**
+     * Add custom Twig filters
+     * @return void
+     */
+    private function addCustomFilters(): void
+    {
+        $this->twigEnvironment->addFilter(new TwigFilter('json_decode', function ($string, $assoc = true) {
+            if (is_string($string)) {
+                return json_decode($string, $assoc);
+            }
+
+            return $string;
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('url_encode', function ($string) {
+            return urlencode($string);
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('number_format', function ($number, $decimals = 0, $decimal_separator = '.', $thousands_separator = ' ') {
+            return number_format($number, $decimals, $decimal_separator, $thousands_separator);
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('date', function ($date, $format = 'Y-m-d H:i:s') {
+            if (is_string($date)) {
+                $timestamp = strtotime($date);
+
+                if ($timestamp !== false) {
+                    return date($format, $timestamp);
+                }
+            } elseif ($date instanceof \DateTime) {
+                return $date->format($format);
+            } elseif (is_numeric($date)) {
+                return date($format, $date);
+            }
+
+            return $date;
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('split', function ($string, $delimiter = ' ', $limit = null) {
+            if ($limit !== null) {
+                return explode($delimiter, $string, $limit);
+            }
+
+            return explode($delimiter, $string);
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('slice', function ($input, $start, $length = null) {
+            if (is_array($input)) {
+                return array_slice($input, $start, $length);
+            } elseif (is_string($input)) {
+                return substr($input, $start, $length);
+            }
+
+            return $input;
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('filter', function ($array, $callback = null) {
+            if (!is_array($array)) {
+                return $array;
+            }
+
+            if ($callback === null) {
+                return array_filter($array);
+            }
+
+            if (is_string($callback)) {
+                return array_filter($array);
+            }
+
+            return array_filter($array, $callback);
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('length', function ($input) {
+            if (is_array($input) || $input instanceof \Countable) {
+                return count($input);
+            } elseif (is_string($input)) {
+                return strlen($input);
+            }
+
+            return 0;
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('capitalize', function ($string) {
+            return ucfirst(strtolower($string));
+        }));
+
+        $this->twigEnvironment->addFilter(new TwigFilter('join', function ($array, $separator = '') {
+            if (is_array($array)) {
+                return implode($separator, $array);
+            }
+
+            return $array;
+        }));
     }
 
     /**
