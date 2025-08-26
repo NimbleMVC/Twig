@@ -6,6 +6,7 @@ use Exception;
 use Krzysztofzylka\File\File;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
+use NimblePHP\Framework\ModuleRegister;
 use Throwable;
 use Twig\Environment;
 use Twig\TwigFunction;
@@ -97,6 +98,11 @@ class Twig
         ]);
 
         $this->loadFunctions(__DIR__ . '/Functions');
+
+        if (ModuleRegister::isset('nimblephp/form')) {
+            $this->loadFunctions(__DIR__ . '/Functions/forms');
+        }
+
         $this->addCustomFilters();
 
         if (!($_ENV['TWIG_CACHE'] ?? false)) {
