@@ -40,6 +40,7 @@ function js(array $data = [], ?string $jsPath = null): Markup
     }
 
     $jsPath = Kernel::$projectPath . '/App/View/' . $controller . '/' . $action . '.js';
+    $jsPath = str_replace('\\', '/', $jsPath);
 
     if (!file_exists($jsPath)) {
         throw new NimbleException('View js file not found ' . $jsPath);
