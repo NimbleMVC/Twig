@@ -348,6 +348,10 @@ class Twig
      */
     public static function addHeader($header): void
     {
+        if (in_array($header, self::$headers)) {
+            return;
+        }
+
         self::$headers[] = $header;
     }
 
