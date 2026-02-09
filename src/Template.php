@@ -30,7 +30,10 @@ class Template
     {
         $this->name = $name;
         $this->twig = new Twig();
-        $this->twig->addPath(Kernel::$projectPath . '/templates');
+
+        if ($_ENV['TWIG_CREATE_TEMPLATE_DIRECTORY'] ?? false) {
+            $this->twig->addPath(Kernel::$projectPath . '/templates');
+        }
     }
 
     /**
