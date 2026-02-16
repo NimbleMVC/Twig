@@ -2,6 +2,7 @@
 
 namespace NimblePHP\Twig;
 
+use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
 use Twig\Error\LoaderError;
@@ -31,7 +32,7 @@ class Template
         $this->name = $name;
         $this->twig = new Twig();
 
-        if ($_ENV['TWIG_CREATE_TEMPLATE_DIRECTORY'] ?? false) {
+        if (Config::get('TWIG_CREATE_TEMPLATE_DIRECTORY', false)) {
             $this->twig->addPath(Kernel::$projectPath . '/templates');
         }
     }
@@ -44,10 +45,18 @@ class Template
      */
     public function render(array $variables = []): void
     {
+        Kernel::$middlewareManager->runHookWithReference('processingViewData', $variables);
+
+        $filePath = $this->name . '.twig';
+
+        Kernel::$middlewareManager->runHook('beforeViewRender', [$data, $this->name, $filePath]);
+
         echo $this->twig->render(
-            $this->name . '.twig',
+            $filePath,
             $variables
         );
+
+        Kernel::$middlewareManager->runHook('afterViewRender', [$data, $this->name, $filePath]);
     }
 
 }
