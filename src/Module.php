@@ -2,6 +2,7 @@
 
 namespace NimblePHP\Twig;
 
+use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Interfaces\CliCommandProviderInterface;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Module\Interfaces\ModuleInterface;
@@ -17,8 +18,11 @@ class Module implements ModuleInterface
 
     public function register(): void
     {
-        $twig = new Twig();
-        Kernel::$serviceContainer->set('view', new View($twig));
+        if (Config::get('TWIG_ADD_SERVICE', true)) {
+            $twig = new Twig();
+
+            Kernel::$serviceContainer->set('view', new View($twig));
+        }
     }
 
 }

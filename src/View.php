@@ -74,6 +74,7 @@ class View
         $this->request = Kernel::$serviceContainer->get('kernel.request');
         $this->twig = $twig;
         $this->twig->addPath(Kernel::$projectPath . $this->viewPath);
+        Kernel::$middlewareManager->runHookWithReference('moduleTwig_afterViewConstruct', $this);
     }
 
     /**
@@ -88,13 +89,15 @@ class View
 
     /**
      * Render view
-     * @param string $viewName
+     * @param string|null $viewPath
      * @param array $data
-     * @return void
-     * @throws NotFoundException
+     * @param bool $return
+     * @param Controller|null $controller
+     * @return null|string
+     * @throws HiddenException
      * @throws NimbleException
      */
-    public function render(array $data = [], ?string $viewPath = null, bool $return = false, ?Controller $controller = null): void
+    public function render(?string $viewPath = null, array $data = [], bool $return = false, ?Controller $controller = null): null|string
     {
         $hash = $this->getHash();
         list($viewName, $viewAction) = $this->extractViewNameAndAction($viewPath);
@@ -104,12 +107,28 @@ class View
         $filePath = $viewName . '/' . $viewAction . '.twig';
         Kernel::$middlewareManager->runHook('beforeViewRender', [$data, $viewName, $filePath]);
         Twig::$headers = array_unique(Twig::$headers);
+        ob_start();
         $response = new Response();
         $response->setContent($this->twig->render($filePath, $data));
         $response->setStatusCode($this->responseCode);
         $response->send();
         Kernel::$middlewareManager->runHook('afterViewRender', [$data, $viewName, $filePath]);
-        return;
+
+        if ($return) {
+            return ob_get_clean();
+        } else {
+            echo ob_get_clean();
+        }
+
+        if ($this->request->isAjax() && !$this->inTwig()) {
+            if (!is_null($controller)) {
+                $controller->renderModalConfigHeader();
+            }
+
+            exit();
+        }
+
+        return null;
     }
 
     /**
