@@ -6,6 +6,7 @@ use Exception;
 use Krzysztofzylka\File\File;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
+use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Module\ModuleRegister;
 use Throwable;
 use Twig\Environment;
