@@ -103,6 +103,8 @@ class Twig
         if (!($_ENV['TWIG_CACHE'] ?? false)) {
             $this->twigEnvironment->setCache(false);
         }
+
+        Kernel::$middlewareManager->runHookWithReference('moduleTwig_afterTwigConstruct', $this);
     }
 
     /**
