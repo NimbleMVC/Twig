@@ -49,14 +49,14 @@ class Template
 
         $filePath = $this->name . '.twig';
 
-        Kernel::$middlewareManager->runHook('beforeViewRender', [$data, $this->name, $filePath]);
+        Kernel::$middlewareManager->runHook('beforeViewRender', [$variables, $this->name, $filePath]);
 
         echo $this->twig->render(
             $filePath,
             $variables
         );
 
-        Kernel::$middlewareManager->runHook('afterViewRender', [$data, $this->name, $filePath]);
+        Kernel::$middlewareManager->runHook('afterViewRender', [$variables, $this->name, $filePath]);
     }
 
 }
