@@ -63,10 +63,11 @@ class Twig
             'headers' => implode("\n\r", self::$headers)
         ];
 
-        $directoryPaths = [
-            $cachePath,
-            Kernel::$projectPath . '/templates'
-        ];
+        $directoryPaths = [$cachePath,];
+
+        if (Config::get('TWIG_CREATE_TEMPLATE_DIRECTORY', false)) {
+            $directoryPaths[] = Kernel::$projectPath . '/templates';
+        }
 
         foreach ($directoryPaths as $directoryPath) {
             try {
@@ -75,13 +76,6 @@ class Twig
                 throw new NimbleException('Failed to create ' . $directoryPath . ' directory: ' . $e->getMessage(), 500);
             }
         }
-
-        File::mkdir(
-            [
-                $cachePath,
-                Kernel::$projectPath . '/templates'
-            ]
-        );
 
         $this->twigFileSystemLoader = new FilesystemLoader();
         $this->addPath(Kernel::$projectPath . '/App/View');
