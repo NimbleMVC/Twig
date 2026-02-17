@@ -40,12 +40,6 @@ class Twig
     public static array $headers = [];
 
     /**
-     * Twig file system loader instance
-     * @var FilesystemLoader
-     */
-    public FilesystemLoader $twigFileSystemLoader;
-
-    /**
      * Twig environment instance
      * @var Environment
      */
@@ -64,7 +58,7 @@ class Twig
             'headers' => implode("\n\r", self::$headers)
         ];
 
-        $directoryPaths = [$cachePath,];
+        $directoryPaths = [$cachePath];
 
         if (Config::get('TWIG_CREATE_TEMPLATE_DIRECTORY', false)) {
             $directoryPaths[] = Kernel::$projectPath . '/templates';
@@ -78,14 +72,15 @@ class Twig
             }
         }
 
-        $this->twigFileSystemLoader = new FilesystemLoader();
+        /** @var FilesystemLoader $filesystemLoader */
+        $filesystemLoader = Kernel::$serviceContainer->get('twig.filesystemloader');
         $this->addPath(Kernel::$projectPath . '/App/View');
 
         foreach (self::$globalPaths as $globalPath) {
             $this->addPath($globalPath);
         }
 
-        $this->twigEnvironment = new Environment($this->twigFileSystemLoader, [
+        $this->twigEnvironment = new Environment($filesystemLoader, [
             'cache' => $cachePath,
             'auto_reload' => true,
             'optimizations' => -1,
@@ -209,7 +204,9 @@ class Twig
      */
     public function addPath($path): void
     {
-        $this->twigFileSystemLoader->addPath($path);
+        /** @var FilesystemLoader $filesystemLoader */
+        $filesystemLoader = Kernel::$serviceContainer->get('twig.filesystemloader');
+        $filesystemLoader->addPath($path);
     }
 
     /**

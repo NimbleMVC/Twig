@@ -5,56 +5,33 @@ namespace NimblePHP\Twig;
 use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
-use Twig\Error\LoaderError;
+use NimblePHP\Framework\Module\Interfaces\ModuleInterface;
+use Twig\Loader\FilesystemLoader;
 
-class Template
+class Module implements ModuleInterface
 {
 
     /**
-     * template name
-     * @var string
+     * @return string
      */
-    public string $name;
-
-    /**
-     * Twig instance
-     * @var Twig
-     */
-    public Twig $twig;
-
-    /**
-     * Constructor
-     * @param $name
-     * @throws LoaderError
-     */
-    public function __construct($name)
+    public function getName(): string
     {
-        $this->name = $name;
-        $this->twig = new Twig();
-
-        $this->twig->addPath(Kernel::$projectPath . '/templates');
+        return 'Nimblephp Twig views';
     }
 
     /**
-     * Render template
-     * @param array $variables
      * @return void
      * @throws NimbleException
      */
-    public function render(array $variables = []): void
+    public function register(): void
     {
-        Kernel::$middlewareManager->runHookWithReference('processingViewData', $variables);
+        Kernel::$serviceContainer->set('twig.filesystemloader', new FilesystemLoader());
 
-        $filePath = $this->name . '.twig';
+        if (Config::get('TWIG_ADD_SERVICE', true)) {
+            $twig = new Twig();
 
-        Kernel::$middlewareManager->runHook('beforeViewRender', [$variables, $this->name, $filePath]);
-
-        echo $this->twig->render(
-            $filePath,
-            $variables
-        );
-
-        Kernel::$middlewareManager->runHook('afterViewRender', [$variables, $this->name, $filePath]);
+            Kernel::$serviceContainer->set('view', new View($twig));
+        }
     }
 
 }
