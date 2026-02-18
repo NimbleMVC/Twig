@@ -2,15 +2,14 @@
 
 namespace NimblePHP\Twig;
 
-use App\Controller;
 use Krzysztofzylka\Generator\Generator;
 use NimblePHP\Framework\Exception\HiddenException;
 use NimblePHP\Framework\Exception\NimbleException;
-use NimblePHP\Framework\Exception\NotFoundException;
-use NimblePHP\Framework\Interfaces\ViewInterface;
+use NimblePHP\Framework\Interfaces\ControllerInterface;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Response;
 use NimblePHP\Framework\Request;
+use NimblePHP\Framework\Translation\Translation;
 use Random\RandomException;
 
 /**
@@ -92,16 +91,24 @@ class View
      * @param string|null $viewPath
      * @param array $data
      * @param bool $return
-     * @param Controller|null $controller
+     * @param ControllerInterface|null $controller
      * @return null|string
      * @throws HiddenException
      * @throws NimbleException
      */
-    public function render(?string $viewPath = null, array $data = [], bool $return = false, ?Controller $controller = null): null|string
+    public function render(?string $viewPath = null, array $data = [], bool $return = false, ?ControllerInterface $controller = null): null|string
     {
         $hash = $this->getHash();
         list($viewName, $viewAction) = $this->extractViewNameAndAction($viewPath);
-        $data['_VIEW'] = ['hash' => $hash, 'viewPath' => $viewPath, 'viewName' => $viewName, 'viewAction' => $viewAction, 'return' => $return, 'isAjax' => $this->request->isAjax()];
+        $data['_VIEW'] = [
+            'hash' => $hash,
+            'viewPath' => $viewPath,
+            'viewName' => $viewName,
+            'viewAction' => $viewAction,
+            'return' => $return,
+            'isAjax' => $this->request->isAjax(),
+            'lang' => Translation::getInstance()->getCurrentLanguage()
+        ];
         $data['_GLOBAL'] = self::$globalVariables;
         Kernel::$middlewareManager->runHookWithReference('processingViewData', $data);
         $filePath = $viewName . '/' . $viewAction . '.twig';

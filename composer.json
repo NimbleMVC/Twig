@@ -16,8 +16,9 @@
     ],
     "require": {
         "php": ">=8.2",
-        "nimblephp/framework": ">=0.4.0",
+        "nimblephp/framework": ">=0.4.1",
         "twig/twig": "^3.23",
-        "krzysztofzylka/file": "^1.0.6"
+        "krzysztofzylka/file": "^1.0.6",
+        "krzysztofzylka/generator": "^1.0"
     }
 }
