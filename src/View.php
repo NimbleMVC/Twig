@@ -9,6 +9,7 @@ use NimblePHP\Framework\Interfaces\ControllerInterface;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Response;
 use NimblePHP\Framework\Request;
+use NimblePHP\Framework\Routes\Route;
 use NimblePHP\Framework\Translation\Translation;
 use Random\RandomException;
 
@@ -98,6 +99,12 @@ class View
      */
     public function render(?string $viewPath = null, array $data = [], bool $return = false, ?ControllerInterface $controller = null): null|string
     {
+        if (is_null($viewPath)) {
+            /** @var Route $route */
+            $route = Kernel::$serviceContainer->get('kernel.router');
+            $viewPath = $route->getController() . '/' . $route->getMethod();
+        }
+
         $hash = $this->getHash();
         list($viewName, $viewAction) = $this->extractViewNameAndAction($viewPath);
         $data['_VIEW'] = [
