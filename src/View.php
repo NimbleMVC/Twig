@@ -116,9 +116,15 @@ class View
             'isAjax' => $this->request->isAjax(),
             'lang' => Translation::getInstance()->getCurrentLanguage()
         ];
-        $data['_GLOBAL'] = self::$globalVariables;
+        $data['_GLOBAL'] = array_merge(Twig::$globalVariables, self::$globalVariables);
         Kernel::$middlewareManager->runHookWithReference('processingViewData', $data);
-        $filePath = $viewName . '/' . $viewAction . '.twig';
+
+        if (str_contains($viewName, '.twig')) {
+            $filePath = $viewName;
+        } else {
+            $filePath = $viewName . '/' . $viewAction . '.twig';
+        }
+
         Kernel::$middlewareManager->runHook('beforeViewRender', [$data, $viewName, $filePath]);
         Twig::$headers = array_unique(Twig::$headers);
         ob_start();
@@ -185,7 +191,7 @@ class View
     {
         $explode = explode('/', $viewPath, 2);
         $viewName = str_replace('\\', '/', $explode[0]);
-        $viewAction = $explode[1];
+        $viewAction = $explode[1] ?? null;
 
         return [$viewName, $viewAction];
     }
