@@ -330,7 +330,14 @@ class Twig
             $functionName = basename($filename, '.php');
 
             if (function_exists($functionName)) {
-                $this->twigEnvironment->addFunction(new TwigFunction($functionName, $functionName));
+                $options = [];
+                $firstParam = (new \ReflectionFunction($functionName))->getParameters()[0] ?? null;
+
+                if ($firstParam?->getType()?->getName() === Environment::class) {
+                    $options['needs_environment'] = true;
+                }
+
+                $this->twigEnvironment->addFunction(new TwigFunction($functionName, $functionName, $options));
             }
         }
     }
