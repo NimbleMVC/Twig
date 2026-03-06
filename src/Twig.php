@@ -198,15 +198,16 @@ class Twig
     }
 
     /**
-     * @param $path
+     * @param string $path
+     * @param string $namespace
      * @return void
      * @throws LoaderError
      */
-    public function addPath($path): void
+    public function addPath(string $path, string $namespace = FilesystemLoader::MAIN_NAMESPACE): void
     {
         /** @var FilesystemLoader $filesystemLoader */
         $filesystemLoader = Kernel::$serviceContainer->get('twig.filesystemloader');
-        $filesystemLoader->addPath($path);
+        $filesystemLoader->addPath($path, $namespace);
     }
 
     /**
