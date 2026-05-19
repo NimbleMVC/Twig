@@ -18,7 +18,11 @@ use Twig\Markup;
 function js(Environment $environment, array $data = [], ?string $jsPath = null): Markup
 {
     try {
-        $jsPath = $environment->getLoader()->getSourceContext($jsPath . '.twig')->getPath();
+        if (!str_contains($jsPath, '.twig') && !empty($jsPath)) {
+            $jsPath .= '.twig';
+        }
+
+        $jsPath = $environment->getLoader()->getSourceContext($jsPath)->getPath();
         $jsPath = str_replace('.twig', '.js', $jsPath);
     } catch (\Throwable) {
         if (!is_null($jsPath) && !str_ends_with($jsPath, '.js')) {
