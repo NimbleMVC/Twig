@@ -18,7 +18,7 @@ use Twig\Markup;
 function js(Environment $environment, array $data = [], ?string $jsPath = null): Markup
 {
     try {
-        if (!str_contains($jsPath, '.twig') && !empty($jsPath)) {
+        if (!empty($jsPath) && !str_contains($jsPath, '.twig')) {
             $jsPath .= '.twig';
         }
 
