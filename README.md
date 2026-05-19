@@ -31,6 +31,11 @@ Moduł korzysta wyłącznie z eventów.
 - `NimblePHP\Twig\Event\AfterViewConstructEvent`
 - frameworkowych `ProcessingViewDataEvent`, `BeforeViewRenderEvent`, `AfterViewRenderEvent`
 
+## Testy
+```shell
+composer test
+```
+
 ## Współtworzenie
 Zachęcamy do współtworzenia! Masz sugestie, znalazłeś błędy, chcesz pomóc w rozwoju? Otwórz issue lub prześlij pull request.
 
