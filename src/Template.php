@@ -2,6 +2,7 @@
 
 namespace NimblePHP\Twig;
 
+use NimblePHP\Framework\Event\Framework\ProcessingViewDataEvent;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
 use Twig\Error\LoaderError;
@@ -42,7 +43,8 @@ class Template
      */
     public function render(array $variables = []): void
     {
-        Kernel::$middlewareManager->runHookWithReference('processingViewData', $variables);
+        $processingEvent = Kernel::dispatchEvent(new ProcessingViewDataEvent($variables));
+        $variables = $processingEvent->data;
 
         $filePath = $this->name . '.twig';
         $view = new View($this->twig);

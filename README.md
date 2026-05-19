@@ -24,6 +24,13 @@ $view->render('test');
 - **TWIG_CACHE** (false) - czy twig ma tworzyć cache
 - **TWIG_CREATE_TEMPLATE_DIRECTORY** (false) - domyślne tworzenie folderu templates
 
+## Rozszerzanie
+Moduł korzysta wyłącznie z eventów.
+
+- `NimblePHP\Twig\Event\AfterTwigConstructEvent`
+- `NimblePHP\Twig\Event\AfterViewConstructEvent`
+- frameworkowych `ProcessingViewDataEvent`, `BeforeViewRenderEvent`, `AfterViewRenderEvent`
+
 ## Współtworzenie
 Zachęcamy do współtworzenia! Masz sugestie, znalazłeś błędy, chcesz pomóc w rozwoju? Otwórz issue lub prześlij pull request.
 

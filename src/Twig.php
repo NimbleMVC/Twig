@@ -8,6 +8,7 @@ use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Module\ModuleRegister;
+use NimblePHP\Twig\Event\AfterTwigConstructEvent;
 use Throwable;
 use Twig\Environment;
 use Twig\TwigFunction;
@@ -99,7 +100,7 @@ class Twig
             $this->twigEnvironment->setCache(false);
         }
 
-        Kernel::$middlewareManager->runHookWithReference('moduleTwig_afterTwigConstruct', $this);
+        Kernel::dispatchEvent(new AfterTwigConstructEvent($this));
     }
 
     /**

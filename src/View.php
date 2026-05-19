@@ -3,6 +3,9 @@
 namespace NimblePHP\Twig;
 
 use Krzysztofzylka\Generator\Generator;
+use NimblePHP\Framework\Event\Framework\AfterViewRenderEvent;
+use NimblePHP\Framework\Event\Framework\BeforeViewRenderEvent;
+use NimblePHP\Framework\Event\Framework\ProcessingViewDataEvent;
 use NimblePHP\Framework\Exception\HiddenException;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Interfaces\ControllerInterface;
@@ -11,6 +14,7 @@ use NimblePHP\Framework\Response;
 use NimblePHP\Framework\Request;
 use NimblePHP\Framework\Routes\Route;
 use NimblePHP\Framework\Translation\Translation;
+use NimblePHP\Twig\Event\AfterViewConstructEvent;
 use Random\RandomException;
 
 /**
@@ -74,7 +78,7 @@ class View
         $this->request = Kernel::$serviceContainer->get('kernel.request');
         $this->twig = $twig;
         $this->twig->addPath(Kernel::$projectPath . $this->viewPath);
-        Kernel::$middlewareManager->runHookWithReference('moduleTwig_afterViewConstruct', $this);
+        Kernel::dispatchEvent(new AfterViewConstructEvent($this));
     }
 
     /**
@@ -117,7 +121,9 @@ class View
             'lang' => Translation::getInstance()->getCurrentLanguage()
         ];
         $data['_GLOBAL'] = array_merge(Twig::$globalVariables, self::$globalVariables);
-        Kernel::$middlewareManager->runHookWithReference('processingViewData', $data);
+        $processingEvent = Kernel::dispatchEvent(new ProcessingViewDataEvent($data));
+        $data = $processingEvent->data;
+        $_previewData = $data;
 
         if (str_contains($viewName, '.twig')) {
             $filePath = $viewName;
@@ -125,14 +131,17 @@ class View
             $filePath = $viewName . '/' . $viewAction . '.twig';
         }
 
-        Kernel::$middlewareManager->runHook('beforeViewRender', [$data, $viewName, $filePath]);
+        $beforeViewRenderEvent = Kernel::dispatchEvent(new BeforeViewRenderEvent($_previewData, $viewName, $filePath));
+        $_previewData = $beforeViewRenderEvent->previewData;
+        $viewName = $beforeViewRenderEvent->viewName;
+        $filePath = $beforeViewRenderEvent->filePath;
         Twig::$headers = array_unique(Twig::$headers);
         ob_start();
         $response = new Response();
-        $response->setContent($this->twig->render($filePath, $data));
+        $response->setContent($this->twig->render($filePath, $_previewData));
         $response->setStatusCode($this->responseCode);
         $response->send();
-        Kernel::$middlewareManager->runHook('afterViewRender', [$data, $viewName, $filePath]);
+        Kernel::dispatchEvent(new AfterViewRenderEvent($_previewData, $viewName, $filePath));
 
         if ($return) {
             return ob_get_clean();
