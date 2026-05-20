@@ -16,10 +16,8 @@ use Twig\Markup;
  */
 function view(string $controller, string $action, array $data = []): false|Markup
 {
-    ob_start();
     $view = new View(new Twig());
+    $content = $view->render($controller . '/' . $action, $data, true);
 
-    $view->render($controller . '/' . $action, $data);
-
-    return new Markup(ob_get_clean(), 'UTF-8');
+    return new Markup($content ?: '', 'UTF-8');
 }

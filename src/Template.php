@@ -51,7 +51,8 @@ class Template
 
         echo $view->render(
             $filePath,
-            $variables
+            $variables,
+            true
         );
     }
 

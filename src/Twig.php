@@ -48,15 +48,18 @@ class Twig
     public Environment $twigEnvironment;
 
     /**
+     * Twig filesystem loader instance
+     * @var FilesystemLoader
+     */
+    private FilesystemLoader $filesystemLoader;
+
+    /**
      * Constructor
      * @throws Exception
      */
     public function __construct()
     {
-        self::$globalVariables['APP'] = [
-            'here' => $_SERVER['REQUEST_URI'] ?? '',
-            'headers' => implode("\n\r", self::$headers)
-        ];
+        $this->refreshAppGlobalVariables();
 
         $directoryPaths = [];
 
@@ -74,6 +77,7 @@ class Twig
 
         /** @var FilesystemLoader $filesystemLoader */
         $filesystemLoader = Kernel::$serviceContainer->get('twig.filesystemloader');
+        $this->filesystemLoader = $filesystemLoader;
         $this->addPath(Kernel::$projectPath . '/App/View');
 
         foreach (self::$globalPaths as $globalPath) {
@@ -95,9 +99,11 @@ class Twig
      */
     public function addPath(string $path, string $namespace = FilesystemLoader::MAIN_NAMESPACE): void
     {
-        /** @var FilesystemLoader $filesystemLoader */
-        $filesystemLoader = Kernel::$serviceContainer->get('twig.filesystemloader');
-        $filesystemLoader->addPath($path, $namespace);
+        if (in_array($path, $this->filesystemLoader->getPaths($namespace), true)) {
+            return;
+        }
+
+        $this->filesystemLoader->addPath($path, $namespace);
     }
 
     /**
@@ -110,12 +116,21 @@ class Twig
     public function render(string $twigFilePath, array $variables = []): string
     {
         try {
+            $this->refreshAppGlobalVariables();
             $variables = array_merge($variables, self::$globalVariables);
 
             return $this->twigEnvironment->render($twigFilePath, $variables);
         } catch (Throwable $throwable) {
             throw new NimbleException($throwable->getMessage(), $throwable->getCode() ?? 500, $throwable);
         }
+    }
+
+    private function refreshAppGlobalVariables(): void
+    {
+        self::$globalVariables['APP'] = [
+            'here' => $_SERVER['REQUEST_URI'] ?? '',
+            'headers' => implode("\n\r", self::$headers),
+        ];
     }
 
     /**

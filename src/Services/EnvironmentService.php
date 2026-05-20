@@ -6,7 +6,6 @@ use NimblePHP\Framework\Config;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Module\ModuleRegister;
-use NimblePHP\Twig\Event\AfterTwigConstructEvent;
 use NimblePHP\Twig\Event\AfterTwigEnvironmentConstructEvent;
 use Twig\Environment;
 use Twig\Loader\FilesystemLoader;
@@ -20,6 +19,9 @@ class EnvironmentService
 
     public FilesystemLoader $filesystemLoader;
 
+    /**
+     * @var string
+     */
     private string $cachePath {
         get {
             return Kernel::$projectPath . '/storage/cache/twig';
@@ -30,6 +32,10 @@ class EnvironmentService
     {
     }
 
+    /**
+     * @param FilesystemLoader $filesystemLoader
+     * @return void
+     */
     public function setFilesystemLoader(FilesystemLoader $filesystemLoader): void
     {
         $this->filesystemLoader = $filesystemLoader;
@@ -40,6 +46,10 @@ class EnvironmentService
         return $this->filesystemLoader;
     }
 
+    /**
+     * @return Environment
+     * @throws NimbleException
+     */
     public function getInstance(): Environment
     {
         if (!isset($this->twigEnvironment)) {
@@ -49,9 +59,13 @@ class EnvironmentService
         return $this->twigEnvironment;
     }
 
-    private function generateInstance()
+    /**
+     * @return void
+     * @throws NimbleException
+     */
+    private function generateInstance(): void
     {
-        $this->twigEnvironment = new Environment($this->filesystemLoader, [
+        $this->twigEnvironment = new Environment($this->getFilesystemLoader(), [
             'cache' => $this->cachePath,
             'auto_reload' => true,
             'optimizations' => -1,
