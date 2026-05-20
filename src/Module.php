@@ -3,10 +3,10 @@
 namespace NimblePHP\Twig;
 
 use NimblePHP\Framework\Config;
-use NimblePHP\Framework\DataStore;
 use NimblePHP\Framework\Exception\NimbleException;
 use NimblePHP\Framework\Kernel;
 use NimblePHP\Framework\Module\Interfaces\ModuleInterface;
+use NimblePHP\Twig\Services\EnvironmentService;
 use Twig\Loader\FilesystemLoader;
 
 class Module implements ModuleInterface
@@ -27,6 +27,7 @@ class Module implements ModuleInterface
     public function register(): void
     {
         Kernel::$serviceContainer->set('twig.filesystemloader', new FilesystemLoader());
+        Kernel::$serviceContainer->set('twig.environment', new EnvironmentService());
 
         if (Config::get('TWIG_ADD_SERVICE', true)) {
             $twig = new Twig();
